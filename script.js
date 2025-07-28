@@ -15,22 +15,34 @@
 
  
 
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '-50px 0px -100px 0px'
+        };
 
-  const boxes = document.querySelectorAll('.services-box');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('active');
+                    }, index * 200);
+                }
+            });
+        }, observerOptions);
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      } else {
-        entry.target.classList.remove('active'); // ← Remove this to keep animation 1-time
-      }
-    });
-  }, {
-    threshold: 0.4
-  });
+        const serviceBoxes = document.querySelectorAll('.services-box');
+        serviceBoxes.forEach(box => {
+            observer.observe(box);
+        });
 
-  boxes.forEach(box => {
-    observer.observe(box);
-  });
+        document.documentElement.style.scrollBehavior = 'smooth';
 
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.services-header');
+            const speed = scrolled * 0.5;
+            
+            if (parallax) {
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        });
